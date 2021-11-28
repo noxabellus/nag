@@ -1,0 +1,28 @@
+;; NAG defined in NAG
+
+NAG = (Comment | Production)+
+where
+	Comment = ";;" line
+
+	Production |=
+		Alias = snakecase
+		Production = camelcase "=" Pattern
+		Function = camelcase snakecase+ "=" Pattern
+		Set = camelcase "=|" NAG
+		Local = Production "where" NAG
+
+	Pattern |=
+		EOF = "()"
+		Group = "(" Pattern ")"
+		Variable = string | snakecase | camelcase
+		Alternative = Pattern "|" Pattern
+		Sequence = Pattern Pattern
+		Application = adjacent((snakecase | camelcase), "(") Pattern**"," ")"
+		Maybe = Pattern "?"
+		Bind = snakecase "of" Pattern
+		Guard = "if" snakecase "is" Pattern "then" Pattern
+		Negate = "not" Pattern
+		ZeroOrMore = Pattern "*"
+		OneOrMore = Pattern "+"
+		ZeroOrMoreSep = Pattern "**" Pattern
+		OneOrMoreSep = Pattern "++" Pattern
